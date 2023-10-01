@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  cf:
+    build: ./cf_demo
+    ports:
+      - "8080:8080"
+  gcs:
+    image: fsouza/fake-gcs-server
+    command: ["--port=9090", "--scheme=http"]
+    healthcheck:
+      test: wget --quiet --output-document=/dev/null http://localhost:9090/storage/v1/b
+      interval: 1s
+      retries: 20
+    ports:
+      - 9090:9090
