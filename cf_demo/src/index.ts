@@ -1,8 +1,18 @@
-const {Storage} = require("@google-cloud/storage")
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+import * as ff from '@google-cloud/functions-framework'
+import { Storage } from '@google-cloud/storage'
+import PDFDocument from 'pdfkit'
+import fs from 'fs'
 
-async function run(message) {
+ff.http('handler', async (req: ff.Request, res: ff.Response) => {
+  try{
+    const c = await run(req.body.message)
+    res.send(c);
+    }catch(err) {
+      console.error("err:", err)
+    }
+});
+
+async function run(message: string) {
     // Create PDF
     let pdfDoc = new PDFDocument;
     pdfDoc.pipe(fs.createWriteStream('SampleDocument.pdf'));
@@ -21,16 +31,3 @@ async function run(message) {
     console.log("Contents:", content.toString())
     return content.toString()
 }
-
-async function handler(req, res) {
-    try{
-    const c = await run(req.body.message)
-    res.send(c);
-    }catch(err) {
-      console.error("err:", err)
-    }
-}
-  
-  module.exports = {
-    handler,
-  };
